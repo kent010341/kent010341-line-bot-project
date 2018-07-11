@@ -6,4 +6,6 @@ Rails.application.routes.draw do
   get '/kent010341/response_headers', to: 'kent010341#response_headers'
   get '/kent010341/response_body', to: 'kent010341#show_response_body'
   get '/kent010341/sent_request', to: 'kent010341#sent_request'
+
+  post '/kent010341/webhook', to: 'kent010341#webhook'
 end
