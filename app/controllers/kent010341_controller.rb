@@ -9,7 +9,7 @@ class Kent010341Controller < ApplicationController
 
 	def webhook
 		# 學說話
-		reply_text = command_trigger(channel_id, received_text)
+		reply_text = learn(channel_id, received_text)
 
 		# 關鍵字回覆
 		reply_text = keyword_reply(channel_id, received_text) if reply_text.nil?
@@ -22,23 +22,21 @@ class Kent010341Controller < ApplicationController
 	end
 
 	# 學說話
-	def command_trigger(channel_id, received_text)
-		#如果開頭不是kbot，跳出
-		return nil unless received_text[0..4].downcase == 'kbot '
+	def learn(channel_id, received_text)
+		#如果開頭不是 卡米狗學說話; 就跳出
+		return nil unless received_text[0..6] == '卡米狗學說話;'
 
-		received_text = received_text[5..-1]
-		space_index = received_text.index(' ')
+		received_text = received_text[7..-1]
+		semicolon_index = received_text.index(';')
 
-		case received_text[0..space_index-1].downcase
-			when 'help', 'h'
-				print_help
-			when 'keyword', 'kw'
-				keyword_trigger(channel_id, received_text[space_index+1..-1])
-			when 'notification', 'nf'
-				notification_trigger(channel_id, received_text[space_index+1..-1])
-			else
-				return nil
-		end
+		# 找不到分號就跳出
+		return nil if semicolon_index.nil?
+
+		keyword = received_text[0..semicolon_index-1]
+		message = received_text[semicolon_index+1..-1]
+
+		KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
+		"create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
 	end
 
 	# 頻道 ID
@@ -84,79 +82,6 @@ class Kent010341Controller < ApplicationController
 			config.channel_token = 'kFlOjWJnFvLcZCtPI4ZgZYsrxrHrgsK9bMPjqxEVtP2bJmdIX3OSgstERol/Ze8iKczr1/9qWIhyl6HDkIi1bcEJjJpVov7izgLyFmGKMRnQ6qIcJYhdFo4XxBFIdIY3ZYUzVy9MoR976fS20dZL0wdB04t89/1O/w1cDnyilFU='
 		}
   end
-
-#==========================================================================
-  	# Command Trigger
-  	def print_help
-  		str_help = 
-  			"kbot 功能清單：\n"
-  			"kbot help：列出功能清單\n" + 
-  			"kbot keyword (new/remove/list) [關鍵詞] [對應回覆]：新增/移除/列出關鍵字回覆\n" + 
-  			"kbot notification (new/remove/list)：功能尚未開放\n" + 
-  			"可使用對應縮寫：\n" + 
-  			"help <=> h\n" + 
-  			"keyword <=> kw\n" + 
-  			"notification <=> nf\n" + 
-  			"(new/remove/list) <=> (n/r/l)"
-  		return str_help
-  	end
-
-  	def keyword_trigger(channel_id, remain_text)
-  		space_index = remain_text.index(' ')
-  		case remain_text[0..space_index-1].downcase
-  			when 'new', 'n'
-  				keyword_new(channel_id, remain_text[space_index+1..-1])
-  			when 'remove', 'r'
-  				keyword_remove(channel_id, remain_text[space_index+1..-1])
-  			when 'list', 'l'
-  				keyword_list(channel_id, remain_text[space_index+1..-1])
-  			else
-  				return nil
-  		end
-  	end
-
-  	def keyword_new(channel_id, r_text)
-  		space_index = r_text.index(' ')
-  		keyword = r_text[0..space_index-1]
-  		reply = r_text[space_index+1..-1]
-
-  		KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
-		'新增關鍵字：#{keyword}，對應回覆：#{reply}'
-  	end
-
-  	def keyword_remove(channel_id, r_text)
-  		'功能尚未開放'
-  	end
-
-  	def keyword_list(channel_id, r_text)
-		'功能尚未開放'
-  	end
-
-  	def notification_trigger(channel_id, remain_text)
-  		space_index = remain_text.index(' ')
-  		case remain_text[0..space_index-1].downcase
-  			when 'new', 'n'
-  				notification_new(channel_id, remain_text[space_index+1..-1])
-  			when 'remove', 'r'
-  				notification_remove(channel_id, remain_text[space_index+1..-1])
-  			when 'list', 'l'
-  				notification_list(channel_id, remain_text[space_index+1..-1])
-  			else
-  				return nil
-  		end
-  	end
-
-  	def notification_new(channel_id, r_text)
-		'功能尚未開放'
-  	end
-
-  	def notification_remove(channel_id, r_text)
-		'功能尚未開放'
-  	end
-
-  	def notification_list(channel_id, r_text)
-		'功能尚未開放'
-  	end
 
 #=======================================================================================================================================
 # day1~16
