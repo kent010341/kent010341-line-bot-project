@@ -36,7 +36,7 @@ class Kent010341Controller < ApplicationController
 		message = received_text[semicolon_index+1..-1]
 
 		KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
-		'好哦～好哦～'
+		"create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
 	end
 
 	# 頻道 ID
