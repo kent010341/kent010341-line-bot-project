@@ -52,7 +52,7 @@ class Kent010341Controller < ApplicationController
 	end
 
 	# 關鍵字回覆
-	def keyword_reply(received_text)
+	def keyword_reply(channel_id, received_text)
 		message = KeywordMapping.where(channel_id: channel_id, keyword: received_text).last&.message
 	    return message unless message.nil?
 	    KeywordMapping.where(keyword: received_text).last&.message
