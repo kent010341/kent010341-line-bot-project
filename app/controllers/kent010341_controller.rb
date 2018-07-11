@@ -6,8 +6,8 @@ class Kent010341Controller < ApplicationController
 	def webhook
 		# Line Bot API 物件初始化
 		client = Line::Bot::Client.new { |config|
-			config.channel_secret = '9160ce4f0be51cc72c3c8a14119f567a'
-			config.channel_token = '2ncMtCFECjdTVmopb/QSD1PhqM6ECR4xEqC9uwIzELIsQb+I4wa/s3pZ4BH8hCWeqfkpVGVig/mIPDsMjVcyVbN/WNeTTw5eHEA7hFhaxPmQSY2Cud51LKPPiXY+nUi+QrXy0d7Hi2YUs65B/tVOpgdB04t89/1O/w1cDnyilFU='
+			config.channel_secret = '120203750409774d33145a57ceb4c6e0'
+			config.channel_token = 'kFlOjWJnFvLcZCtPI4ZgZYsrxrHrgsK9bMPjqxEVtP2bJmdIX3OSgstERol/Ze8iKczr1/9qWIhyl6HDkIi1bcEJjJpVov7izgLyFmGKMRnQ6qIcJYhdFo4XxBFIdIY3ZYUzVy9MoR976fS20dZL0wdB04t89/1O/w1cDnyilFU='
 		}
 
 		# 取得 reply token
