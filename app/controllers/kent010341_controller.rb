@@ -86,7 +86,7 @@ class Kent010341Controller < ApplicationController
 		end
 
 		def keyword_remove(channel_id, received_text)
-			delete_data = KeywordMapping.find_by(channel_id: channel_id, keyword: keyword)
+			delete_data = KeywordMapping.find_by(channel_id: channel_id, keyword: received_text)
 			#delete_data.destroy
 			return "刪除：#{delete_data}"
 		end
