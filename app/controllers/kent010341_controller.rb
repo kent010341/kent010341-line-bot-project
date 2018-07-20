@@ -54,7 +54,7 @@ class Kent010341Controller < ApplicationController
 		str_help = "kbot 指令列表：\n" + 
 			"kbot help：顯示指令列表及說明\n" + 
 			"kbot keyword new [關鍵字] [對應回覆]：新增關鍵字及對應回覆\n" + 
-			"kbot keyword remove [關鍵字]：移除該關鍵字\n" + 
+			"kbot keyword remove [編號(用list查詢)]：移除該關鍵字\n" + 
 			"kbot keyword list：列出所有關鍵字\n" + 
 			"==========================\n" + 
 			"備註：本指令系統有提供縮寫：\n" + 
@@ -89,7 +89,7 @@ class Kent010341Controller < ApplicationController
 			puts "==================================================="
 			puts "debug flag 1"
 			puts "==================================================="
-			delete_data = KeywordMapping.find_by(channel_id: channel_id, keyword: received_text.force_encoding("UTF-8"))
+			delete_data = KeywordMapping.find_by(channel_id: channel_id, id: received_text)
 			puts "==================================================="
 			puts "debug flag 2: #{delete_data}"
 			puts "==================================================="
@@ -99,10 +99,10 @@ class Kent010341Controller < ApplicationController
 
 		def keyword_list(channel_id)
 			data_count = KeywordMapping.where(channel_id: channel_id).count
-			str_return = "總資料筆數：#{data_count}\n"
+			str_return = "總資料筆數：#{data_count}\n\n"
 			data_arr = KeywordMapping.first(data_count)
 			data_arr.each do |data|
-				str_return += "#{data.keyword} <=> #{data.message}\n"
+				str_return += "#{data.id}. #{data.keyword} <=> #{data.message}\n"
 			end
 			return str_return
 		end
