@@ -28,23 +28,23 @@ class Kent010341Controller < ApplicationController
 # Command Trigger
 	def command_trigger(channel_id, received_text)
 		# 檢查是否為指令
-		return nil unless received_text[0..4] == 'kbot '
+		return nil unless received_text[0..4] == "kbot "
 		# 檢查下一個詞
 		received_text = received_text[5..-1]
 		# 找尋space位置
-		if not received_text.index(' ').nil?
-			space_index = received_text.index(' ') 
-		elsif received_text.downcase == 'help' || received_text.downcase == 'h'
-			help_trigger
+		if not received_text.index(" ").nil?
+			space_index = received_text.index(" ") 
+		elsif received_text.downcase == "help" || received_text.downcase == "h"
+			return help_trigger
 		else
 			return nil
 		end
 		# 檢查下一個詞為何
 		case received_text[0..space_index-1].downcase
-			when 'keyword', 'kw'
-				keyword_trigger(channel_id, received_text[space_index+1..-1])
+			when "keyword", "kw"
+				return keyword_trigger(channel_id, received_text[space_index+1..-1])
 			else
-				return '查無指令，使用kbot help或kbot h查看指令列表'
+				return "查無指令，使用kbot help或kbot h查看指令列表"
 		end
 		#KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
 		#"create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
@@ -68,8 +68,8 @@ class Kent010341Controller < ApplicationController
 	    # keyword相關指令-----------------------------------
 	    def keyword_new(channel_id, received_text)
 	    	# 找尋space位置
-	    	unless received_text.index(' ').nil?
-				space_index = received_text.index(' ') 
+	    	unless received_text.index(" ").nil?
+				space_index = received_text.index(" ") 
 			else
 				return nil
 			end
@@ -81,35 +81,35 @@ class Kent010341Controller < ApplicationController
 				reply = received_text[space_index+1..-1]
 
 				KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
-				"create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
+				return "create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
 			end
 		end
 
 		def keyword_remove(channel_id, received_text)
-			"該功能尚未完成"
+			return "該功能尚未完成"
 		end
 
 		def keyword_list(channel_id)
-			"該功能尚未完成"
+			return "該功能尚未完成"
 		end
 
 		# 主要處理區---------------------------------------
 		# 找尋space位置
-		if not received_text.index(' ').nil?
-			space_index = received_text.index(' ')
-		elsif received_text.downcase == 'list' || received_text.downcase == 'l'
-			keyword_list(channel_id)
+		if not received_text.index(" ").nil?
+			space_index = received_text.index(" ")
+		elsif received_text.downcase == "list" || received_text.downcase == "l"
+			return keyword_list(channel_id)
 		else
-			return '查無指令，使用kbot help或kbot h查看指令列表'
+			return "查無指令，使用kbot help或kbot h查看指令列表"
 		end
 		# 檢查下一個字
 		case received_text[0..space_index-1].downcase
-			when 'new', 'n'
-				keyword_new(received_text[space_index+1..-1], channel_id)
-			when 'remove', 'r'
-				keyword_remove(received_text[space_index+1..-1], channel_id)
+			when "new", "n"
+				return keyword_new(received_text[space_index+1..-1], channel_id)
+			when "remove", "r"
+				return keyword_remove(received_text[space_index+1..-1], channel_id)
 			else
-				return '查無指令，使用kbot help或kbot h查看指令列表'
+				return "查無指令，使用kbot help或kbot h查看指令列表"
 		end
 	end
 #=======================================================================================================================================
