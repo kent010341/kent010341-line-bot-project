@@ -9,8 +9,11 @@ class Kent010341Controller < ApplicationController
 
 	def webhook
 		# 學說話
-		reply_text = learn(channel_id, received_text)
-
+		begin
+			reply_text = command_trigger(channel_id, received_text)
+		rescue
+			nil
+		end
 		# 關鍵字回覆
 		reply_text = keyword_reply(channel_id, received_text) if reply_text.nil?
 
@@ -21,24 +24,96 @@ class Kent010341Controller < ApplicationController
 		head :ok
 	end
 
-	# 學說話
-	def learn(channel_id, received_text)
-		#如果開頭不是 卡米狗學說話; 就跳出
-		return nil unless received_text[0..6] == '卡米狗學說話;'
-
-		received_text = received_text[7..-1]
-		semicolon_index = received_text.index(';')
-
-		# 找不到分號就跳出
-		return nil if semicolon_index.nil?
-
-		keyword = received_text[0..semicolon_index-1]
-		message = received_text[semicolon_index+1..-1]
-
-		KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
-		"create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
+#=======================================================================================================================================
+# Command Trigger
+	def command_trigger(channel_id, received_text)
+		# 檢查是否為指令
+		return nil unless received_text[0..4] == 'kbot '
+		# 檢查下一個詞
+		received_text = received_text[5..-1]
+		# 找尋space位置
+		if not received_text.index(' ').nil?
+			space_index = received_text.index(' ') 
+		elsif received_text.downcase == 'help' || received_text.downcase == 'h'
+			help_trigger
+		else
+			return nil
+		end
+		# 檢查下一個詞為何
+		case received_text[0..space_index-1].downcase
+			when 'keyword', 'kw'
+				keyword_trigger(channel_id, received_text[space_index+1..-1])
+			else
+				return '查無指令，使用kbot help或kbot h查看指令列表'
+		end
+		#KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
+		#"create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
 	end
 
+	def help_trigger
+		str_help = "kbot 指令列表：\n" + 
+			"kbot help：顯示指令列表及說明\n" + 
+			"kbot keyword new [關鍵字] [對應回覆]：新增關鍵字及對應回覆\n" + 
+			"kbot keyword remove [關鍵字]：移除該關鍵字\n" + 
+			"kbot keyword list：列出所有關鍵字\n" + 
+			"=========================================================\n" + 
+			"備註：本指令系統有提供縮寫：\n" + 
+			"help <=> h\n" + 
+			"keyword <=> kw\n" + 
+			"[new/remove/list] <=> [n/r/l]"
+		return str_help
+	end
+
+	def keyword_trigger(channel_id, received_text)
+	    # keyword相關指令-----------------------------------
+	    def keyword_new(channel_id, received_text)
+	    	# 找尋space位置
+	    	unless received_text.index(' ').nil?
+				space_index = received_text.index(' ') 
+			else
+				return nil
+			end
+			# 擷取關鍵字及對應回覆
+			if received_text[space_index+1].nil?
+				return nil
+			else
+				keyword = received_text[0..space_index-1]
+				reply = received_text[space_index+1..-1]
+
+				KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
+				"create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
+			end
+		end
+
+		def keyword_remove(channel_id, received_text)
+			"該功能尚未完成"
+		end
+
+		def keyword_list(channel_id)
+			"該功能尚未完成"
+		end
+
+		# 主要處理區---------------------------------------
+		# 找尋space位置
+		if not received_text.index(' ').nil?
+			space_index = received_text.index(' ')
+		elsif received_text.downcase == 'list' || received_text.downcase == 'l'
+			keyword_list(channel_id)
+		else
+			return '查無指令，使用kbot help或kbot h查看指令列表'
+		end
+		# 檢查下一個字
+		case received_text[0..space_index-1].downcase
+			when 'new', 'n'
+				keyword_new(received_text[space_index+1..-1], channel_id)
+			when 'remove', 'r'
+				keyword_remove(received_text[space_index+1..-1], channel_id)
+			else
+				return '查無指令，使用kbot help或kbot h查看指令列表'
+		end
+	end
+#=======================================================================================================================================
+# Other Line Functions
 	# 頻道 ID
 	def channel_id
 		source = params['events'][0]['source']
