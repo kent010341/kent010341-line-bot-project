@@ -94,7 +94,9 @@ class Kent010341Controller < ApplicationController
 		def keyword_list(channel_id)
 			data_count = KeywordMapping.where(channel_id: channel_id).count
 			puts "總資料筆數：#{data_count}"
+			puts "================================================================"
 			puts KeywordMapping.where(channel_id: channel_id).last&.keyword
+			puts "================================================================"
 			return "list 施工中"
 		end
 
