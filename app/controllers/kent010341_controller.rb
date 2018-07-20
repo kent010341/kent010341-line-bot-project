@@ -105,9 +105,9 @@ class Kent010341Controller < ApplicationController
 		# 檢查下一個字
 		case received_text[0..space_index-1].downcase
 			when "new", "n"
-				return keyword_new(received_text[space_index+1..-1], channel_id)
+				return keyword_new(channel_id, received_text[space_index+1..-1])
 			when "remove", "r"
-				return keyword_remove(received_text[space_index+1..-1], channel_id)
+				return keyword_remove(channel_id, received_text[space_index+1..-1])
 			else
 				return "查無指令，使用kbot help或kbot h查看指令列表"
 		end
