@@ -68,26 +68,17 @@ class Kent010341Controller < ApplicationController
 	    # keyword相關指令-----------------------------------
 	    def keyword_new(channel_id, received_text)
 	    	# 找尋space位置
-	    	puts "=================================================="
-	    	puts "keyword_new received_text: #{received_text}"
-	    	puts "=================================================="
 	    	unless received_text.index(" ").nil?
 				space_index = received_text.index(" ") 
 			else
 				return nil
 			end
-		    	puts "=================================================="
-		    	puts "bug fixing flag 2"
-		    	puts "=================================================="
 			# 擷取關鍵字及對應回覆
 			if received_text[space_index+1].nil? || !(received_text =~ /(\S)+/)
 				return "無對應回覆"
 			else
-		    	puts "=================================================="
-		    	puts "bug fixing flag 3"
-		    	puts "=================================================="
 				keyword = received_text[0..space_index-1]
-				reply = received_text[space_index+1..-1]
+				message = received_text[space_index+1..-1]
 
 				KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
 				return "create(\n    channel_id: #{channel_id},\n    keyword: #{keyword},\n    message: #{message}\n)"
@@ -112,9 +103,6 @@ class Kent010341Controller < ApplicationController
 			return "查無指令，使用kbot help或kbot h查看指令列表"
 		end
 		# 檢查下一個字
-    	puts "=================================================="
-    	puts "keyword_trigger received_text: #{received_text}"
-    	puts "=================================================="
 		case received_text[0..space_index-1].downcase
 			when "new", "n"
 				return keyword_new(channel_id, received_text[space_index+1..-1])
