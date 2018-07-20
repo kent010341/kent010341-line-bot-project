@@ -68,11 +68,17 @@ class Kent010341Controller < ApplicationController
 	    # keyword相關指令-----------------------------------
 	    def keyword_new(channel_id, received_text)
 	    	# 找尋space位置
+	    	puts "=================================================="
+	    	puts "keyword_new received_text: #{received_text}"
+	    	puts "=================================================="
 	    	unless received_text.index(" ").nil?
 				space_index = received_text.index(" ") 
 			else
 				return nil
 			end
+		    	puts "=================================================="
+		    	puts "bug fixing flag 2"
+		    	puts "=================================================="
 			# 擷取關鍵字及對應回覆
 			if received_text[space_index+1].nil? || !(received_text =~ /(\S)+/)
 				return "無對應回覆"
