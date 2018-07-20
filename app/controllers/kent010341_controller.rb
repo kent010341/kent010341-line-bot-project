@@ -109,6 +109,9 @@ class Kent010341Controller < ApplicationController
 			return "查無指令，使用kbot help或kbot h查看指令列表"
 		end
 		# 檢查下一個字
+    	puts "=================================================="
+    	puts "keyword_trigger received_text: #{received_text}"
+    	puts "=================================================="
 		case received_text[0..space_index-1].downcase
 			when "new", "n"
 				return keyword_new(channel_id, received_text[space_index+1..-1])
