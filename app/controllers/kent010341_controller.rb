@@ -81,16 +81,21 @@ class Kent010341Controller < ApplicationController
 				message = received_text[space_index+1..-1]
 
 				KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
-				return "create(\n    channel_id: #{channel_id},\n    keyword: #{keyword},\n    message: #{message}\n)"
+				return "新增關鍵字：#{keyword}\n對應回覆：#{message}"
 			end
 		end
 
 		def keyword_remove(channel_id, received_text)
-			return "該功能尚未完成"
+			delete_data = KeywordMapping.find_by(channel_id: channel_id, keyword: keyword)
+			#delete_data.destroy
+			return "刪除：#{delete_data}"
 		end
 
 		def keyword_list(channel_id)
-			return "該功能尚未完成"
+			data_count = KeywordMapping.where(channel_id: channel_id).count
+			puts "總資料筆數：#{}"
+			puts KeywordMapping.where(channel_id: channel_id)
+			return "list 施工中"
 		end
 
 		# 主要處理區---------------------------------------
