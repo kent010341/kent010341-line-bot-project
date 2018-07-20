@@ -56,7 +56,7 @@ class Kent010341Controller < ApplicationController
 			"kbot keyword new [關鍵字] [對應回覆]：新增關鍵字及對應回覆\n" + 
 			"kbot keyword remove [關鍵字]：移除該關鍵字\n" + 
 			"kbot keyword list：列出所有關鍵字\n" + 
-			"=========================================================\n" + 
+			"==========================\n" + 
 			"備註：本指令系統有提供縮寫：\n" + 
 			"help <=> h\n" + 
 			"keyword <=> kw\n" + 
@@ -74,14 +74,14 @@ class Kent010341Controller < ApplicationController
 				return nil
 			end
 			# 擷取關鍵字及對應回覆
-			if received_text[space_index+1].nil?
-				return nil
+			if received_text[space_index+1].nil? || !(received_text =~ /(\S)+/)
+				return "無對應回覆"
 			else
 				keyword = received_text[0..space_index-1]
 				reply = received_text[space_index+1..-1]
 
 				KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
-				return "create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
+				return "create(\n    channel_id: #{channel_id},\n    keyword: #{keyword},\n    message: #{message}\n)"
 			end
 		end
 
