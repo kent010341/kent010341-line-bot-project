@@ -95,7 +95,10 @@ class Kent010341Controller < ApplicationController
 			data_count = KeywordMapping.where(channel_id: channel_id).count
 			puts "總資料筆數：#{data_count}"
 			puts "================================================================"
-			puts KeywordMapping.first(data_count)
+			data_arr = KeywordMapping.first(data_count)
+			data_arr.each do |data|
+				puts "#{data.keyword} <=> #{data.message}\n"
+			end
 			puts "================================================================"
 			return "list 施工中"
 		end
