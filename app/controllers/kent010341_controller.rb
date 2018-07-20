@@ -87,15 +87,15 @@ class Kent010341Controller < ApplicationController
 
 		def keyword_remove(channel_id, received_text)
 			delete_data = KeywordMapping.find_by(channel_id: channel_id, keyword: received_text)
-			#delete_data.destroy
-			return "刪除：#{delete_data}"
+			delete_data.destroy
+			return "刪除#{received_text}及其對應回覆"
 		end
 
 		def keyword_list(channel_id)
 			data_count = KeywordMapping.where(channel_id: channel_id).count
 			puts "總資料筆數：#{data_count}"
 			puts "================================================================"
-			puts KeywordMapping.where(channel_id: channel_id).last&.keyword
+			puts KeywordMapping.first(data_count)
 			puts "================================================================"
 			return "list 施工中"
 		end
