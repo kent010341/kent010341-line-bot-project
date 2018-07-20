@@ -83,6 +83,9 @@ class Kent010341Controller < ApplicationController
 			if received_text[space_index+1].nil? || !(received_text =~ /(\S)+/)
 				return "無對應回覆"
 			else
+		    	puts "=================================================="
+		    	puts "bug fixing flag 3"
+		    	puts "=================================================="
 				keyword = received_text[0..space_index-1]
 				reply = received_text[space_index+1..-1]
 
