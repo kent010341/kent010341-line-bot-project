@@ -89,7 +89,9 @@ class Kent010341Controller < ApplicationController
 			puts "==================================================="
 			puts "debug flag 1"
 			puts "==================================================="
-			delete_data = KeywordMapping.find_by(channel_id: channel_id, id: received_text)
+			data_count = KeywordMapping.where(channel_id: channel_id).count
+			data_arr = KeywordMapping.first(data_count)
+			delete_data = data_arr[received_text-1]
 			puts "==================================================="
 			puts "debug flag 2: #{delete_data}"
 			puts "==================================================="
@@ -98,11 +100,13 @@ class Kent010341Controller < ApplicationController
 		end
 
 		def keyword_list(channel_id)
+			i = 1
 			data_count = KeywordMapping.where(channel_id: channel_id).count
 			str_return = "總資料筆數：#{data_count}\n\n"
 			data_arr = KeywordMapping.first(data_count)
 			data_arr.each do |data|
-				str_return += "#{data.id}. #{data.keyword} <=> #{data.message}\n"
+				str_return += "index: #{i}| #{data.keyword} <=> #{data.message}\n"
+				i += 1
 			end
 			return str_return
 		end
