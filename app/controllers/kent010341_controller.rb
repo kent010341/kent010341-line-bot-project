@@ -27,62 +27,65 @@ class Kent010341Controller < ApplicationController
 #=======================================================================================================================================
 # Command Trigger
 	def command_trigger(channel_id, received_text)
+		#正規表示式列表
+		dict_reg = {
+			"h" => /^\s+help|h\b\s*(.*)/,
+        	"kw" => /^\s+keyword|kw\b\s+(.*)/
+		}
+
 		# 檢查是否為指令
 		return nil unless received_text[0..4] == "kbot "
-		# 檢查下一個詞
-		received_text = received_text[5..-1]
-		# 找尋space位置
-		if not received_text.index(" ").nil?
-			space_index = received_text.index(" ") 
-		elsif received_text.downcase == "help" || received_text.downcase == "h"
-			return help_trigger
-		else
-			return nil
-		end
-		# 檢查下一個詞為何
-		case received_text[0..space_index-1].downcase
-			when "keyword", "kw"
-				return keyword_trigger(channel_id, received_text[space_index+1..-1])
+		# 裁切文字
+		received_text = received_text[4..-1]
+		# 判斷下個字
+		if received_text =~ dict_reg["h"]
+			if $1 == ""
+				return help_trigger
 			else
-				return "查無指令，使用kbot help或kbot h查看指令列表"
+				return help_trigger($1)
+			end
+		elsif received_text =~ dict_reg["kw"]
+			return keyword_trigger(channel_id, $1)
+		else
+			return "查無指令，使用kbot help或kbot h查看指令列表"
 		end
-		#KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
-		#"create(channel_id: #{channel_id}, keyword: #{keyword}, message: #{message})"
 	end
 
-	def help_trigger
-		str_help = "kbot 指令列表：\n" + 
-			"kbot help：顯示指令列表及說明\n" + 
-			"kbot keyword new [關鍵字] [對應回覆]：新增關鍵字及對應回覆\n" + 
+	def help_trigger(selection=nil)
+		str_output = ""
+
+		str_title = "kbot 指令列表："
+		str_kw = "kbot keyword new [關鍵字] [對應回覆]：新增關鍵字及對應回覆\n" + 
 			"kbot keyword remove [編號(用list查詢)]：移除該關鍵字\n" + 
-			"kbot keyword list：列出所有關鍵字\n" + 
-			"==========================\n" + 
+			"kbot keyword list：列出所有關鍵字"
+		str_help = "kbot help：顯示指令列表及說明\n" + 
+			"kbot help [help/keyword]：查看特定指令"
+		str_alert = "==========================\n" + 
 			"備註：本指令系統有提供縮寫：\n" + 
 			"help <=> h\n" + 
 			"keyword <=> kw\n" + 
 			"[new/remove/list] <=> [n/r/l]"
-		return str_help
+
+		if selection.nil?
+			str_output = str_title + "\n" + str_help + "\n" + str_kw + "\n" + str_alert
+		else
+			if selection =~ /^help|h\b/
+				str_output = "kbot help 指令列表：" + "\n" + str_help + "\n" + str_alert
+			elsif selection =~ /^keyword|kw\b/
+				str_output = "kbot keyword 指令列表：" + "\n" + str_kw + "\n" + str_alert
+			else
+				str_output = "無此指令"
+			end
+		end
+
+		return str_output
 	end
 
 	def keyword_trigger(channel_id, received_text)
 	    # keyword相關指令-----------------------------------
-	    def keyword_new(channel_id, received_text)
-	    	# 找尋space位置
-	    	unless received_text.index(" ").nil?
-				space_index = received_text.index(" ") 
-			else
-				return nil
-			end
-			# 擷取關鍵字及對應回覆
-			if received_text[space_index+1].nil? || !(received_text =~ /(\S)+/)
-				return "無對應回覆"
-			else
-				keyword = received_text[0..space_index-1]
-				message = received_text[space_index+1..-1]
-
-				KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
-				return "新增關鍵字：#{keyword}\n對應回覆：#{message}"
-			end
+	    def keyword_new(channel_id, keyword , message)
+			KeywordMapping.create(channel_id: channel_id, keyword: keyword, message: message)
+			return "新增關鍵字：#{keyword}\n對應回覆：#{message}"
 		end
 
 		def keyword_remove(channel_id, received_text)
@@ -112,22 +115,22 @@ class Kent010341Controller < ApplicationController
 		end
 
 		# 主要處理區---------------------------------------
-		# 找尋space位置
-		if not received_text.index(" ").nil?
-			space_index = received_text.index(" ")
-		elsif received_text.downcase == "list" || received_text.downcase == "l"
-			return keyword_list(channel_id)
-		else
-			return "查無指令，使用kbot help或kbot h查看指令列表"
-		end
-		# 檢查下一個字
-		case received_text[0..space_index-1].downcase
-			when "new", "n"
-				return keyword_new(channel_id, received_text[space_index+1..-1])
-			when "remove", "r"
-				return keyword_remove(channel_id, received_text[space_index+1..-1])
+		dict_reg = {
+			"n" => /^(new|n)\b\s+(\S+)\s+(\S+)/,
+			"r" => /^(remove|r)\b\s+(\S+)/,
+			"l" => /^(list|l)\b/
+		}
+
+		if received_text =~ dict_reg["n"]
+			if !($2 == "" && $3 == "")
+				return keyword_new(channel_id, $2, $3)
 			else
 				return "查無指令，使用kbot help或kbot h查看指令列表"
+			end
+		elsif received_text =~ dict_reg["r"]
+			return keyword_remove(channel_id, $2)
+		elsif received_text =~ dict_reg["l"]
+			return keyword_list(channel_id)
 		end
 	end
 #=======================================================================================================================================
