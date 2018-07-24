@@ -58,7 +58,7 @@ class Kent010341Controller < ApplicationController
 		str = nil
 
 		puts "======================================================="
-		puts KeywordMapping.find_by_sql("select * from KeywordMapping where channel_id=#{channel_id}")
+		puts KeywordMapping.find_by_sql("select * from KeywordMapping")
 		puts "======================================================="
 
 		return str
