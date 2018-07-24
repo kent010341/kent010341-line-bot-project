@@ -58,7 +58,7 @@ class Kent010341Controller < ApplicationController
 		str = nil
 
 		puts "======================================================="
-		puts KeywordMapping.all.class
+		str = KeywordMapping.all
 		puts "======================================================="
 
 		return str
