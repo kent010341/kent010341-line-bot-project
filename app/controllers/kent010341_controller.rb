@@ -106,7 +106,7 @@ class Kent010341Controller < ApplicationController
 			puts "debug flag 1"
 			puts "==================================================="
 			data_count = KeywordMapping.where(channel_id: channel_id).count
-			data_arr = KeywordMapping.first(data_count)
+			data_arr = KeywordMapping.where(channel_id: channel_id).first(data_count)
 			delete_data = data_arr[received_text-1]
 			puts "==================================================="
 			puts "debug flag 2: #{delete_data}"
@@ -119,7 +119,7 @@ class Kent010341Controller < ApplicationController
 			i = 1
 			data_count = KeywordMapping.where(channel_id: channel_id).count
 			str_return = "總資料筆數：#{data_count}\n\n"
-			data_arr = KeywordMapping.first(data_count)
+			data_arr = KeywordMapping.where(channel_id: channel_id).first(data_count)
 			data_arr.each do |data|
 				str_return += "index: #{i}| #{data.keyword} <=> #{data.message}\n"
 				i += 1
