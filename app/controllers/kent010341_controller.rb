@@ -107,7 +107,7 @@ class Kent010341Controller < ApplicationController
 			puts "==================================================="
 			data_count = KeywordMapping.where(channel_id: channel_id).count
 			data_arr = KeywordMapping.where(channel_id: channel_id).first(data_count)
-			delete_data = data_arr[received_text-1]
+			delete_data = data_arr[received_text.to_i - 1]
 			puts "==================================================="
 			puts "debug flag 2: #{delete_data}"
 			puts "==================================================="
