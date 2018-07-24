@@ -70,6 +70,7 @@ class Kent010341Controller < ApplicationController
 		str_title = "kbot 指令列表："
 		str_kw = "kbot keyword new [關鍵字] [對應回覆]：新增關鍵字及對應回覆\n" + 
 			"kbot keyword remove [編號(用list查詢)]：移除該關鍵字\n" + 
+			"kbot keyword remove \\all：移除全部關鍵字\n" + 
 			"kbot keyword list：列出所有關鍵字"
 		str_help = "kbot help：顯示指令列表及說明\n" + 
 			"kbot help [help/keyword]：查看特定指令"
@@ -102,17 +103,17 @@ class Kent010341Controller < ApplicationController
 		end
 
 		def keyword_remove(channel_id, received_text)
-			puts "==================================================="
-			puts "debug flag 1"
-			puts "==================================================="
 			data_count = KeywordMapping.where(channel_id: channel_id).count
 			data_arr = KeywordMapping.where(channel_id: channel_id).first(data_count)
+			if received_text == "\\all"
+				data_arr.each do |data|
+					data.destroy
+				end
+				return "已清除全部關鍵字"
+			end
 			delete_data = data_arr[received_text.to_i - 1]
-			puts "==================================================="
-			puts "debug flag 2: #{delete_data}"
-			puts "==================================================="
 			delete_data.destroy
-			return "刪除#{received_text}及其對應回覆"
+			return "刪除#{delete_data.keyword}及其對應回覆"
 		end
 
 		def keyword_list(channel_id)
