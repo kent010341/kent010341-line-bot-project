@@ -48,17 +48,17 @@ class Kent010341Controller < ApplicationController
 		elsif received_text =~ dict_reg["kw"]
 			return keyword_trigger(channel_id, $1)
 		elsif received_text =~ dict_reg["debug"]
-			return debug_func
+			return debug_func(channel_id)
 		else
 			return "查無指令，使用kbot help或kbot h查看指令列表"
 		end
 	end
 
-	def debug_func
+	def debug_func(channel_id)
 		str = nil
 
 		puts "======================================================="
-		str = String(KeywordMapping.all)
+		puts KeywordMapping.find_by_sql("select * from KeywordMapping where channel_id=#{channel_id}")
 		puts "======================================================="
 
 		return str
@@ -105,12 +105,13 @@ class Kent010341Controller < ApplicationController
 			puts "==================================================="
 			puts "debug flag 1"
 			puts "==================================================="
-			data_arr = KeywordMapping.find_by_channel_id(channel_id)
+			data_count = KeywordMapping.where(channel_id: channel_id).count
+			data_arr = KeywordMapping.first(data_count)
 			delete_data = data_arr[received_text-1]
 			puts "==================================================="
 			puts "debug flag 2: #{delete_data}"
 			puts "==================================================="
-			#delete_data.destroy
+			delete_data.destroy
 			return "刪除#{received_text}及其對應回覆"
 		end
 
@@ -118,7 +119,7 @@ class Kent010341Controller < ApplicationController
 			i = 1
 			data_count = KeywordMapping.where(channel_id: channel_id).count
 			str_return = "總資料筆數：#{data_count}\n\n"
-			data_arr = KeywordMapping.find_by_channel_id(channel_id)
+			data_arr = KeywordMapping.first(data_count)
 			data_arr.each do |data|
 				str_return += "index: #{i}| #{data.keyword} <=> #{data.message}\n"
 				i += 1
