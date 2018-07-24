@@ -30,7 +30,7 @@ class Kent010341Controller < ApplicationController
 		#正規表示式列表
 		dict_reg = {
 			"h" => /^\s+help|h\b\s*(.*)/,
-        	"kw" => /^\s+keyword|kw\b\s+(.*)/
+        	"kw" => /^\s+keyword|kw\b\s+(.*)/,
         	"debug" => /^\s+debug|d\b/
 		}
 
@@ -48,14 +48,14 @@ class Kent010341Controller < ApplicationController
 		elsif received_text =~ dict_reg["kw"]
 			return keyword_trigger(channel_id, $1)
 		elsif received_text =~ dict_reg["debug"]
-			return "debug mode: " + debug_func
+			return debug_func
 		else
 			return "查無指令，使用kbot help或kbot h查看指令列表"
 		end
 	end
 
 	def debug_func
-		str = ""
+		str = nil
 
 		puts "======================================================="
 		p KeywordMapping.all
